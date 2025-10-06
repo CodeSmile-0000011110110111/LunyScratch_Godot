@@ -1,4 +1,3 @@
-#if GODOT
 using Godot;
 
 namespace LunyScratch
@@ -12,4 +11,3 @@ namespace LunyScratch
 		public override void _Ready() => ScratchRuntime.Initialize();
 	}
 }
-#endif

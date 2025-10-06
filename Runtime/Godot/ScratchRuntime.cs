@@ -1,4 +1,3 @@
-#if GODOT
 using Godot;
 using System;
 
@@ -40,8 +39,8 @@ namespace LunyScratch
 		public override void _ExitTree()
 		{
 			_blockRunner.Dispose();
+			GameEngine.Shutdown();
 			s_Instance = null;
 		}
 	}
 }
-#endif

@@ -1,4 +1,3 @@
-#if GODOT
 using Godot;
 using System;
 
@@ -32,5 +31,4 @@ namespace LunyScratch
 			}
 		}
 	}
-#endif
 }

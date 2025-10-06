@@ -1,4 +1,3 @@
-#if GODOT
 using Godot;
 
 namespace LunyScratch
@@ -9,5 +8,4 @@ namespace LunyScratch
 
 		public static IScratchBlock Disable(GodotObject obj) => Blocks.Disable(new GodotEngineObject(obj));
 	}
-#endif
 }
