@@ -1,4 +1,3 @@
-/*
 using Godot;
 using System;
 
@@ -25,7 +24,7 @@ namespace LunyScratch
 				case CollisionObject3D collision:
 					collision.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 					break;
-
+				
 				case Node node:
 					node.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 					break;
@@ -33,4 +32,3 @@ namespace LunyScratch
 		}
 	}
 }
-*/
