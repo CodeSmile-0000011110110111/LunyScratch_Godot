@@ -1,3 +1,4 @@
+/*
 using Godot;
 
 namespace LunyScratch
@@ -6,8 +7,9 @@ namespace LunyScratch
 	/// Base class for all Scratch-style behaviors in Godot.
 	/// Automatically initializes GodotScratchRuntime on first use.
 	/// </summary>
-	public partial class ScratchNode3D : Node3D
+	public partial class ScratchNode2D : Node2D
 	{
 		public override void _Ready() => ScratchRuntime.Initialize();
 	}
 }
+*/

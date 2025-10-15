@@ -1,3 +1,4 @@
+/*
 using Godot;
 using System;
 
@@ -44,3 +45,4 @@ namespace LunyScratch
 		}
 	}
 }
+*/

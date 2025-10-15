@@ -1,3 +1,4 @@
+/*
 using Godot;
 using System;
 
@@ -20,3 +21,4 @@ namespace LunyScratch
 		public Double GetCurrentTimeInSeconds() => Time.GetTicksMsec() / 1000.0;
 	}
 }
+*/
