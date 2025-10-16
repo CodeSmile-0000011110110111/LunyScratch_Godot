@@ -15,20 +15,16 @@ namespace LunyScratch
 		{
 			switch (_engineObject)
 			{
-				case CanvasItem canvasItem:
+				case CanvasItem canvasItem: // also catches Node2D
 					canvasItem.Visible = enabled;
 					break;
-				case Light3D light3D:
-					light3D.Visible = enabled;
-					break;
-				case CollisionObject3D collision:
-					collision.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
-					break;
-				
-				case Node node:
-					node.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
+				case Node3D node3d:
+					node3d.Visible = enabled;
 					break;
 			}
+
+			if (_engineObject is Node node)
+				node.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace LunyScratch
 {
@@ -22,7 +23,11 @@ namespace LunyScratch
 			if (_cache.TryGetValue(path, out var cached))
 				return cached;
 
-			Resource res = GD.Load(path);
+			var assetPath = path.StartsWith("res://") ? path : $"res://{path}";
+			if (System.IO.Path.GetExtension(assetPath) == string.Empty)
+				assetPath = $"{assetPath}.tscn"; // assume scene
+
+			Resource res = GD.Load(assetPath);
 			IEngineAsset wrapped = null;
 			if (res is PackedScene ps && typeof(IEnginePrefabAsset).IsAssignableFrom(assetType))
 			{

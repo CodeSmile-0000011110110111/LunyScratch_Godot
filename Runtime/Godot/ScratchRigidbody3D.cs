@@ -8,7 +8,7 @@ namespace LunyScratch
 	/// Automatically initializes ScratchRuntime on first use.
 	/// </summary>
 	[GlobalClass]
-	public partial class ScratchNode2D : Node2D, IScratchRunner
+	public partial class ScratchRigidbody3D : RigidBody3D, IScratchRunner
 	{
 		private ScratchRunnerHost _host;
 		public Table Variables => _host.Variables;
@@ -17,7 +17,7 @@ namespace LunyScratch
 		public IEngineMenu Menu { get => ScratchRuntime.Singleton.Menu; set => ScratchRuntime.Singleton.Menu = value; }
 		public IEngineCamera ActiveCamera => ScratchRuntime.Singleton.ActiveCamera;
 
-		public ScratchNode2D() => ScratchRuntime.Initialize();
+		public ScratchRigidbody3D() => ScratchRuntime.Initialize();
 
 		// IScratchRunner implementation
 		public void Run(params IScratchBlock[] blocks) => _host.Run(blocks);
@@ -27,11 +27,14 @@ namespace LunyScratch
 		public void When(EventBlock evt, params IScratchBlock[] blocks) => Run(Blocks.When(evt, blocks));
 
 		public override void _Ready() => OnScratchReady();
+
 		public override void _EnterTree()
 		{
+			GD.Print($"EnterTree: {Name} ({GetType().Name})");
 			_host = new ScratchRunnerHost(this, this);
 			WireCollisionSignalsRecursive(this);
 		}
+
 		public override void _ExitTree() => _host.Dispose();
 		public override void _Process(Double deltaTimeInSeconds) => _host.ProcessUpdate(deltaTimeInSeconds);
 		public override void _PhysicsProcess(Double delta) => _host.ProcessPhysicsUpdate(delta);
@@ -40,20 +43,28 @@ namespace LunyScratch
 
 		private void WireCollisionSignalsRecursive(Node root)
 		{
+			GD.Print($"{Name} WireCollisionSignalsRecursive: {root}");
 			if (root == null)
 				return;
 
-			if (root is RigidBody2D r2d)
+			if (root is RigidBody3D r3d)
 			{
 				var callable = new Callable(this, nameof(OnScratchBodyEntered));
-				if (!r2d.IsConnected(RigidBody2D.SignalName.BodyEntered, callable))
-					r2d.Connect(RigidBody2D.SignalName.BodyEntered, callable);
+				if (!r3d.IsConnected(RigidBody3D.SignalName.BodyEntered, callable))
+				{
+					GD.Print($"wired {Name} body entered signal");
+					r3d.Connect(RigidBody3D.SignalName.BodyEntered, callable);
+					return;
+				}
 			}
-			else if (root is Area2D area2d)
+			else if (root is Area3D area3d)
 			{
 				var callable = new Callable(this, nameof(OnScratchBodyEntered));
-				if (!area2d.IsConnected(Area2D.SignalName.BodyEntered, callable))
-					area2d.Connect(Area2D.SignalName.BodyEntered, callable);
+				if (!area3d.IsConnected(Area3D.SignalName.BodyEntered, callable))
+				{
+					area3d.Connect(Area3D.SignalName.BodyEntered, callable);
+					return;
+				}
 			}
 
 			foreach (var child in root.GetChildren())
@@ -65,7 +76,8 @@ namespace LunyScratch
 
 		private void OnScratchBodyEntered(Node body)
 		{
+			//GD.Print($"N3 {Name} body touched: {body.Name}");
 			_host?.Context?.EnqueueCollisionEnter(body);
 		}
-}
+	}
 }

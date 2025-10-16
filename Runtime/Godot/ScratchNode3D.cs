@@ -10,45 +10,73 @@ namespace LunyScratch
 	[GlobalClass]
 	public partial class ScratchNode3D : Node3D, IScratchRunner
 	{
-		private readonly Table _variables = new();
-		private BlockRunner _runner;
-		private ScratchBehaviourContext _context;
-		public Table Variables => _variables;
+		private ScratchRunnerHost _host;
+		public Table Variables => _host.Variables;
+		public Table GlobalVariables => ScratchRuntime.Singleton.Variables;
+		public IEngineHUD HUD { get => ScratchRuntime.Singleton.HUD; set => ScratchRuntime.Singleton.HUD = value; }
+		public IEngineMenu Menu { get => ScratchRuntime.Singleton.Menu; set => ScratchRuntime.Singleton.Menu = value; }
+		public IEngineCamera ActiveCamera => ScratchRuntime.Singleton.ActiveCamera;
+
+		public ScratchNode3D() => ScratchRuntime.Initialize();
 
 		// IScratchRunner implementation
-		public void Run(params IScratchBlock[] blocks)
-		{
-			if (blocks == null)
-				return;
-
-			foreach (var b in blocks)
-				_runner.AddBlock(b);
-		}
-
-		public void RunPhysics(params IScratchBlock[] blocks)
-		{
-			if (blocks == null)
-				return;
-
-			foreach (var b in blocks)
-				_runner.AddPhysicsBlock(b);
-		}
-
+		public void Run(params IScratchBlock[] blocks) => _host.Run(blocks);
+		public void RunPhysics(params IScratchBlock[] blocks) => _host.RunPhysics(blocks);
 		public void RepeatForever(params IScratchBlock[] blocks) => Run(Blocks.RepeatForever(blocks));
 		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => RunPhysics(Blocks.RepeatForever(blocks));
 		public void When(EventBlock evt, params IScratchBlock[] blocks) => Run(Blocks.When(evt, blocks));
-		public override void _Ready() => ScratchRuntime.Initialize();
+
+		public override void _Ready() => OnScratchReady();
 
 		public override void _EnterTree()
 		{
-			_context = new ScratchBehaviourContext(this, this);
-			_runner = new BlockRunner(_context);
+			_host = new ScratchRunnerHost(this, this);
+			WireCollisionSignalsRecursive(this);
 		}
 
-		public override void _Process(Double deltaTimeInSeconds) => _runner?.ProcessUpdate(deltaTimeInSeconds);
+		public override void _ExitTree() => _host.Dispose();
+		public override void _Process(Double deltaTimeInSeconds) => _host.ProcessUpdate(deltaTimeInSeconds);
+		public override void _PhysicsProcess(Double delta) => _host.ProcessPhysicsUpdate(delta);
 
-		public override void _PhysicsProcess(Double delta) => _runner?.ProcessPhysicsUpdate(delta);
+		protected virtual void OnScratchReady() {}
 
-		public override void _ExitTree() => _runner?.Dispose();
+		private void WireCollisionSignalsRecursive(Node root)
+		{
+			//GD.Print($"{Name} WireCollisionSignalsRecursive: {root}");
+			if (root == null)
+				return;
+
+			if (root is RigidBody3D r3d)
+			{
+				var callable = new Callable(this, nameof(OnScratchBodyEntered));
+				if (!r3d.IsConnected(RigidBody3D.SignalName.BodyEntered, callable))
+				{
+					GD.Print($"wired {Name} body entered signal");
+					r3d.Connect(RigidBody3D.SignalName.BodyEntered, callable);
+					return;
+				}
+			}
+			else if (root is Area3D area3d)
+			{
+				var callable = new Callable(this, nameof(OnScratchBodyEntered));
+				if (!area3d.IsConnected(Area3D.SignalName.BodyEntered, callable))
+				{
+					area3d.Connect(Area3D.SignalName.BodyEntered, callable);
+					return;
+				}
+			}
+
+			foreach (var child in root.GetChildren())
+			{
+				if (child is Node n)
+					WireCollisionSignalsRecursive(n);
+			}
+		}
+
+		private void OnScratchBodyEntered(Node body)
+		{
+			//GD.Print($"N3 {Name} body touched: {body.Name}");
+			_host?.Context?.EnqueueCollisionEnter(body);
+		}
 	}
 }
