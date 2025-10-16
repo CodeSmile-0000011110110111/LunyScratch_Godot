@@ -8,13 +8,13 @@ namespace LunyScratch
 	/// Minimal global context for blocks not bound to a specific node.
 	/// Provides access to the runner and basic engine operations. Component-specific properties return null.
 	/// </summary>
-	internal sealed class GodotGlobalContext : IScratchContext
+	internal sealed class ScratchBehaviourContext : IScratchContext
 	{
 		private readonly Node _host;
 		private readonly IScratchRunner _runner;
 		private readonly Dictionary<string, IEngineObject> _childCache = new();
 
-		public GodotGlobalContext(Node host, IScratchRunner runner)
+		public ScratchBehaviourContext(Node host, IScratchRunner runner)
 		{
 			_host = host;
 			_runner = runner;

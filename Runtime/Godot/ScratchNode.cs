@@ -7,8 +7,7 @@ namespace LunyScratch
 	/// Base class for all Scratch-style behaviors in Godot.
 	/// Automatically initializes ScratchRuntime on first use.
 	/// </summary>
-	[GlobalClass]
-	public partial class ScratchNode3D : Node3D, IScratchRunner
+	public partial class ScratchNode : Node, IScratchRunner
 	{
 		private readonly Table _variables = new();
 		private BlockRunner _runner;

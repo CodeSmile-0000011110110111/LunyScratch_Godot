@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace LunyScratch
 {
@@ -8,13 +7,9 @@ namespace LunyScratch
 	/// Auto-initializes when first accessed.
 	/// Implements IScratchRunner to provide global block execution.
 	/// </summary>
-	public sealed partial class ScratchRuntime : Node, IEngineRuntime
+	public sealed partial class ScratchRuntime : ScratchNode, IEngineRuntime
 	{
 		private static ScratchRuntime s_Instance;
-
-		private BlockRunner _runner;
-		private GodotGlobalContext _context;
-		private readonly Table _variables = new();
 
 		public static ScratchRuntime Instance => s_Instance;
 
@@ -34,46 +29,5 @@ namespace LunyScratch
 			// Initialize the engine abstraction
 			GameEngine.Initialize(s_Instance, new GodotActions(), new GodotAssetRegistry());
 		}
-
-		public override void _EnterTree()
-		{
-			_context = new GodotGlobalContext(this, this);
-			_runner = new BlockRunner(_context);
-		}
-
-		public override void _Process(Double deltaTimeInSeconds)
-		{
-			_runner?.ProcessUpdate(deltaTimeInSeconds);
-		}
-
-		public override void _PhysicsProcess(Double delta)
-		{
-			_runner?.ProcessPhysicsUpdate(delta);
-		}
-
-		public override void _ExitTree()
-		{
-			_runner?.Dispose();
-			GameEngine.Shutdown();
-			s_Instance = null;
-		}
-
-		// IScratchRunner implementation
-		public void Run(params IScratchBlock[] blocks)
-		{
-			if (blocks == null) return;
-			foreach (var b in blocks) _runner.AddBlock(b);
-		}
-
-		public void RunPhysics(params IScratchBlock[] blocks)
-		{
-			if (blocks == null) return;
-			foreach (var b in blocks) _runner.AddPhysicsBlock(b);
-		}
-
-		public void RepeatForever(params IScratchBlock[] blocks) => Run(Blocks.RepeatForever(blocks));
-		public void RepeatForeverPhysics(params IScratchBlock[] blocks) => RunPhysics(Blocks.RepeatForever(blocks));
-		public void When(EventBlock evt, params IScratchBlock[] blocks) => Run(Blocks.When(evt, blocks));
-		public Table Variables => _variables;
 	}
 }
