@@ -42,7 +42,6 @@ namespace LunyScratch
 
 		private void WireCollisionSignalsRecursive(Node root)
 		{
-			//GD.Print($"{Name} WireCollisionSignalsRecursive: {root}");
 			if (root == null)
 				return;
 
@@ -51,7 +50,6 @@ namespace LunyScratch
 				var callable = new Callable(this, nameof(OnScratchBodyEntered));
 				if (!r3d.IsConnected(RigidBody3D.SignalName.BodyEntered, callable))
 				{
-					GD.Print($"wired {Name} body entered signal");
 					r3d.Connect(RigidBody3D.SignalName.BodyEntered, callable);
 					return;
 				}
@@ -73,10 +71,6 @@ namespace LunyScratch
 			}
 		}
 
-		private void OnScratchBodyEntered(Node body)
-		{
-			//GD.Print($"N3 {Name} body touched: {body.Name}");
-			_host?.Context?.EnqueueCollisionEnter(body);
-		}
+		private void OnScratchBodyEntered(Node body) => _host?.Context?.EnqueueCollisionEnter(body);
 	}
 }

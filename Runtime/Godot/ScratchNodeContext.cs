@@ -17,6 +17,9 @@ namespace LunyScratch
 
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
+		private IEngineAudioSource _cachedAudio;
+		private IEngineCamera _cachedCamera;
+		private readonly Dictionary<Type, IEngineObject> _childTypeCache = new();
 
 		public IRigidbody Rigidbody
 		{
@@ -49,10 +52,38 @@ namespace LunyScratch
 				throw new InvalidOperationException("ScratchNodeContext host must be a Node2D or Node3D to access Transform.");
 			}
 		}
-		public IEngineAudioSource Audio => null;
+		public IEngineAudioSource Audio
+		{
+			get
+			{
+				if (_cachedAudio != null)
+					return _cachedAudio;
+				if (_host == null)
+					return null;
+
+				var found = FindNodeByTypes(_host, typeof(AudioStreamPlayer), typeof(AudioStreamPlayer2D), typeof(AudioStreamPlayer3D));
+				if (found != null)
+					_cachedAudio = new ScratchAudioSource(found);
+				return _cachedAudio;
+			}
+		}
 		public IEngineObject Self => _host != null ? new GodotEngineObject(_host) : null;
 		public IScratchRunner Runner => _runner;
-		public IEngineCamera ActiveCamera => null;
+		public IEngineCamera ActiveCamera
+		{
+			get
+			{
+				if (_cachedCamera != null)
+					return _cachedCamera;
+				if (_host == null)
+					return null;
+
+				var found = FindNodeByTypes(_host, typeof(Camera3D), typeof(Camera2D));
+				if (found != null)
+					_cachedCamera = new ScratchCamera(found);
+				return _cachedCamera;
+			}
+		}
 
 		public ScratchNodeContext(Node host, IScratchRunner runner)
 		{
@@ -88,6 +119,72 @@ namespace LunyScratch
 				var wrapped = new GodotEngineObject(found);
 				_childCache[name] = wrapped;
 				return wrapped;
+			}
+			return null;
+		}
+
+		public IEngineObject FindChild(Type type)
+		{
+			if (_host == null || type == null)
+				return null;
+			if (_childTypeCache.TryGetValue(type, out var cached))
+				return cached;
+
+			var found = FindFirstByType(_host, type);
+			if (found != null)
+			{
+				var wrapped = new GodotEngineObject(found);
+				_childTypeCache[type] = wrapped;
+				return wrapped;
+			}
+			return null;
+		}
+
+		private static GodotObject FindNodeByTypes(Node start, params Type[] types)
+		{
+			if (start == null || types == null || types.Length == 0)
+				return null;
+
+			// Check self first
+			foreach (var t in types)
+			{
+				if (t.IsInstanceOfType(start))
+					return start;
+			}
+
+			// DFS on children
+			foreach (var child in start.GetChildren())
+			{
+				var cnode = child as Node;
+				if (cnode == null) continue;
+				foreach (var t in types)
+				{
+					if (t.IsInstanceOfType(cnode))
+						return cnode;
+				}
+				var deeper = FindNodeByTypes(cnode, types);
+				if (deeper != null)
+					return deeper;
+			}
+			return null;
+		}
+
+		private static GodotObject FindFirstByType(Node start, Type type)
+		{
+			if (start == null || type == null)
+				return null;
+			if (type.IsInstanceOfType(start))
+				return start;
+			foreach (var child in start.GetChildren())
+			{
+				if (child is Node node)
+				{
+					if (type.IsInstanceOfType(node))
+						return node;
+					var deeper = FindFirstByType(node, type);
+					if (deeper != null)
+						return deeper;
+				}
 			}
 			return null;
 		}
