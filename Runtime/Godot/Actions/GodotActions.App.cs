@@ -6,16 +6,20 @@ namespace LunyScratch
 	{
 		public void ReloadCurrentScene()
 		{
-			var tree = ScratchRuntime.GetSceneTree();
+			var tree = ScratchRuntime.SceneTree;
 			if (tree?.CurrentScene != null)
 			{
-				tree.ReloadCurrentScene();
+				ScratchRuntime.Singleton.OnCurrentSceneUnloading(tree.CurrentScene);
+
+				var error = tree.ReloadCurrentScene();
+				if (error != null && error != Error.Ok)
+					GD.PrintErr($"ReloadCurrentScene: {error}");
 			}
 		}
 
 		public void QuitApplication()
 		{
-			var tree = ScratchRuntime.GetSceneTree();
+			var tree = ScratchRuntime.SceneTree;
 			tree?.Quit();
 		}
 	}

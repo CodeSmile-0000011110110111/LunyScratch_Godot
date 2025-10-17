@@ -8,7 +8,6 @@ namespace LunyScratch
 		{
 			if (prefab is GodotPrefabAsset godotPrefab)
 			{
-				var sceneTree = ScratchRuntime.GetSceneTree();
 				var node = godotPrefab.PackedScene.Instantiate();
 				if (node is Node3D node3D)
 				{
@@ -17,7 +16,7 @@ namespace LunyScratch
 				}
 
 				if (node is Node n)
-					sceneTree?.Root.CallDeferred(Node.MethodName.AddChild, n);
+					ScratchRuntime.CurrentSceneRoot?.CallDeferred(Node.MethodName.AddChild, n);
 
 				return new GodotEngineObject(node);
 			}

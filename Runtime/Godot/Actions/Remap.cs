@@ -1,0 +1,106 @@
+﻿namespace LunyScratch
+{
+	internal sealed class Remap
+	{
+		internal static Godot.Key ToGodotKey(Key key) => key switch
+		{
+			// Letters
+			Key.A => Godot.Key.A,
+			Key.B => Godot.Key.B,
+			Key.C => Godot.Key.C,
+			Key.D => Godot.Key.D,
+			Key.E => Godot.Key.E,
+			Key.F => Godot.Key.F,
+			Key.G => Godot.Key.G,
+			Key.H => Godot.Key.H,
+			Key.I => Godot.Key.I,
+			Key.J => Godot.Key.J,
+			Key.K => Godot.Key.K,
+			Key.L => Godot.Key.L,
+			Key.M => Godot.Key.M,
+			Key.N => Godot.Key.N,
+			Key.O => Godot.Key.O,
+			Key.P => Godot.Key.P,
+			Key.Q => Godot.Key.Q,
+			Key.R => Godot.Key.R,
+			Key.S => Godot.Key.S,
+			Key.T => Godot.Key.T,
+			Key.U => Godot.Key.U,
+			Key.V => Godot.Key.V,
+			Key.W => Godot.Key.W,
+			Key.X => Godot.Key.X,
+			Key.Y => Godot.Key.Y,
+			Key.Z => Godot.Key.Z,
+			// Top-row digits
+			Key.Digit0 => Godot.Key.Key0,
+			Key.Digit1 => Godot.Key.Key1,
+			Key.Digit2 => Godot.Key.Key2,
+			Key.Digit3 => Godot.Key.Key3,
+			Key.Digit4 => Godot.Key.Key4,
+			Key.Digit5 => Godot.Key.Key5,
+			Key.Digit6 => Godot.Key.Key6,
+			Key.Digit7 => Godot.Key.Key7,
+			Key.Digit8 => Godot.Key.Key8,
+			Key.Digit9 => Godot.Key.Key9,
+			// Function keys
+			Key.F1 => Godot.Key.F1,
+			Key.F2 => Godot.Key.F2,
+			Key.F3 => Godot.Key.F3,
+			Key.F4 => Godot.Key.F4,
+			Key.F5 => Godot.Key.F5,
+			Key.F6 => Godot.Key.F6,
+			Key.F7 => Godot.Key.F7,
+			Key.F8 => Godot.Key.F8,
+			Key.F9 => Godot.Key.F9,
+			Key.F10 => Godot.Key.F10,
+			Key.F11 => Godot.Key.F11,
+			Key.F12 => Godot.Key.F12,
+			// Arrows
+			Key.LeftArrow => Godot.Key.Left,
+			Key.RightArrow => Godot.Key.Right,
+			Key.UpArrow => Godot.Key.Up,
+			Key.DownArrow => Godot.Key.Down,
+			// Specials
+			Key.Any => Godot.Key.None, // handled at a higher level
+			Key.Space => Godot.Key.Space,
+			Key.Enter => Godot.Key.Enter,
+			Key.Escape => Godot.Key.Escape,
+			Key.Tab => Godot.Key.Tab,
+			Key.Backspace => Godot.Key.Backspace,
+			Key.Delete => Godot.Key.Delete,
+			Key.LeftShift => Godot.Key.Shift,
+			Key.RightShift => Godot.Key.Shift,
+			Key.LeftCtrl => Godot.Key.Ctrl,
+			Key.RightCtrl => Godot.Key.Ctrl,
+			Key.LeftAlt => Godot.Key.Alt,
+			Key.RightAlt => Godot.Key.Alt,
+			// Numpad
+			Key.Numpad0 => Godot.Key.Kp0,
+			Key.Numpad1 => Godot.Key.Kp1,
+			Key.Numpad2 => Godot.Key.Kp2,
+			Key.Numpad3 => Godot.Key.Kp3,
+			Key.Numpad4 => Godot.Key.Kp4,
+			Key.Numpad5 => Godot.Key.Kp5,
+			Key.Numpad6 => Godot.Key.Kp6,
+			Key.Numpad7 => Godot.Key.Kp7,
+			Key.Numpad8 => Godot.Key.Kp8,
+			Key.Numpad9 => Godot.Key.Kp9,
+			Key.NumpadEnter => Godot.Key.KpEnter,
+			Key.NumpadPlus => Godot.Key.KpAdd,
+			Key.NumpadMinus => Godot.Key.KpSubtract,
+			Key.NumpadMultiply => Godot.Key.KpMultiply,
+			Key.NumpadDivide => Godot.Key.KpDivide,
+			var _ => Godot.Key.None,
+		};
+
+		internal static Godot.MouseButton ToGodotMouseButton(MouseButton button) => button switch
+		{
+			MouseButton.Left => Godot.MouseButton.Left,
+			MouseButton.Right => Godot.MouseButton.Right,
+			MouseButton.Middle => Godot.MouseButton.Middle,
+			MouseButton.Forward => Godot.MouseButton.Xbutton2,
+			MouseButton.Back => Godot.MouseButton.Xbutton1,
+			var _ => 0,
+		};
+	}
+}
