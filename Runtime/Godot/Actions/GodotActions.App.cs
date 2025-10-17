@@ -6,14 +6,16 @@ namespace LunyScratch
 	{
 		public void ReloadCurrentScene()
 		{
-			var tree = Engine.GetMainLoop() as SceneTree;
+			var tree = ScratchRuntime.GetSceneTree();
 			if (tree?.CurrentScene != null)
+			{
 				tree.ReloadCurrentScene();
+			}
 		}
 
 		public void QuitApplication()
 		{
-			var tree = Engine.GetMainLoop() as SceneTree;
+			var tree = ScratchRuntime.GetSceneTree();
 			tree?.Quit();
 		}
 	}

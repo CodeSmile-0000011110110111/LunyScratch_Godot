@@ -28,6 +28,11 @@ namespace LunyScratch
 			_runner = new BlockRunner(_context);
 		}
 
+		internal void ClearAllBlocks()
+		{
+			_runner.Clear();
+		}
+
 		internal void Dispose() => _runner?.Dispose();
 
 		internal void Run(params IScratchBlock[] blocks)

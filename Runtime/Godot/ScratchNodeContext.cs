@@ -97,8 +97,8 @@ namespace LunyScratch
 				_host.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 		}
 
-		public IEngineHUD GetEngineHUD() => null;
-		public IEngineMenu GetEngineMenu() => null;
+		public IEngineHUD GetEngineHUD() => ScratchRuntime.Singleton.HUD;
+		public IEngineMenu GetEngineMenu() => ScratchRuntime.Singleton.Menu;
 
 		public void ScheduleDestroy()
 		{
