@@ -203,6 +203,8 @@ namespace LunyScratch
 			return false;
 		}
 
+		public void Dispose() => throw new NotImplementedException();
+
 		internal void EnqueueCollisionEnter(Node other)
 		{
 			if (other != null)

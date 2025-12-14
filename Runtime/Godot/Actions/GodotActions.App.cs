@@ -12,7 +12,7 @@ namespace LunyScratch
 				ScratchRuntime.Singleton.OnCurrentSceneUnloading(tree.CurrentScene);
 
 				var error = tree.ReloadCurrentScene();
-				if (error != null && error != Error.Ok)
+				if (error != Error.Ok)
 					GD.PrintErr($"ReloadCurrentScene: {error}");
 			}
 		}

@@ -26,5 +26,7 @@ namespace LunyScratch
 			if (_engineObject is Node node)
 				node.ProcessMode = enabled ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 		}
+
+		public T GetEngineObject<T>() where T : class => throw new NotImplementedException();
 	}
 }

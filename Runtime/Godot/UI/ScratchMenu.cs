@@ -12,6 +12,9 @@ namespace LunyScratch
 	public sealed partial class ScratchMenu : ScratchUI, IEngineMenu
 	{
 		public event Action<string> OnButtonClicked;
+		public void RegisterEventHandler(String widgetName) => throw new NotImplementedException();
+
+		public void UnregisterEventHandler(String widgetName) => throw new NotImplementedException();
 
 		private readonly Dictionary<Button, Action> _handlers = new();
 
