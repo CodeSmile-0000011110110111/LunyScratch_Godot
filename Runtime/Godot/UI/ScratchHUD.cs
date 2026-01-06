@@ -7,7 +7,5 @@ namespace LunyScratch
 	/// Expects to be attached to a Control node named "HUD" at the scene root.
 	/// </summary>
 	[GlobalClass]
-	public sealed partial class ScratchHUD : ScratchUI, IEngineHUD
-	{
-	}
+	public sealed partial class ScratchHUD : ScratchUI, IEngineHUD {}
 }

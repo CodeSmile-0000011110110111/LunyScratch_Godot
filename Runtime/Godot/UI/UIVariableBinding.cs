@@ -17,10 +17,7 @@ namespace LunyScratch
 			_variable.OnValueChanged += OnValueChanged;
 		}
 
-		public void Dispose()
-		{
-			_variable.OnValueChanged -= OnValueChanged;
-		}
+		public void Dispose() => _variable.OnValueChanged -= OnValueChanged;
 
 		private void OnValueChanged(Variable variable)
 		{
@@ -32,9 +29,7 @@ namespace LunyScratch
 					label.Text = variable.String;
 			}
 			else
-			{
 				GD.PrintErr($"Unsupported UI element type: {_element?.GetType()} (name={_element?.Name})");
-			}
 		}
 	}
 }

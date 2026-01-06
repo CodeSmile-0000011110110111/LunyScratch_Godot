@@ -14,12 +14,12 @@ namespace LunyScratch
 		private readonly IScratchRunner _runner;
 		private readonly Dictionary<String, IEngineObject> _childCache = new();
 		private readonly HashSet<Node> _collisionEnterQueue = new();
+		private readonly Dictionary<Type, IEngineObject> _childTypeCache = new();
 
 		private IRigidbody _cachedRigidbody;
 		private ITransform _cachedTransform;
 		private IEngineAudioSource _cachedAudio;
 		private IEngineCamera _cachedCamera;
-		private readonly Dictionary<Type, IEngineObject> _childTypeCache = new();
 
 		public IRigidbody Rigidbody
 		{
@@ -85,6 +85,59 @@ namespace LunyScratch
 			}
 		}
 
+		private static GodotObject FindNodeByTypes(Node start, params Type[] types)
+		{
+			if (start == null || types == null || types.Length == 0)
+				return null;
+
+			// Check self first
+			foreach (var t in types)
+			{
+				if (t.IsInstanceOfType(start))
+					return start;
+			}
+
+			// DFS on children
+			foreach (var child in start.GetChildren())
+			{
+				var cnode = child;
+				if (cnode == null)
+					continue;
+
+				foreach (var t in types)
+				{
+					if (t.IsInstanceOfType(cnode))
+						return cnode;
+				}
+				var deeper = FindNodeByTypes(cnode, types);
+				if (deeper != null)
+					return deeper;
+			}
+			return null;
+		}
+
+		private static GodotObject FindFirstByType(Node start, Type type)
+		{
+			if (start == null || type == null)
+				return null;
+			if (type.IsInstanceOfType(start))
+				return start;
+
+			foreach (var child in start.GetChildren())
+			{
+				if (child is Node node)
+				{
+					if (type.IsInstanceOfType(node))
+						return node;
+
+					var deeper = FindFirstByType(node, type);
+					if (deeper != null)
+						return deeper;
+				}
+			}
+			return null;
+		}
+
 		public ScratchNodeContext(Node host, IScratchRunner runner)
 		{
 			_host = host;
@@ -123,6 +176,23 @@ namespace LunyScratch
 			return null;
 		}
 
+		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
+		{
+			foreach (var other in _collisionEnterQueue)
+			{
+				if (other == null)
+					continue;
+
+				var nameOk = nameFilter == null || String.Equals(other.Name, nameFilter, StringComparison.InvariantCulture);
+				var tagOk = tagFilter == null || other.IsInGroup(tagFilter);
+				if (nameOk && tagOk)
+					return true;
+			}
+			return false;
+		}
+
+		public void Dispose() => throw new NotImplementedException();
+
 		public IEngineObject FindChild(Type type)
 		{
 			if (_host == null || type == null)
@@ -140,77 +210,10 @@ namespace LunyScratch
 			return null;
 		}
 
-		private static GodotObject FindNodeByTypes(Node start, params Type[] types)
-		{
-			if (start == null || types == null || types.Length == 0)
-				return null;
-
-			// Check self first
-			foreach (var t in types)
-			{
-				if (t.IsInstanceOfType(start))
-					return start;
-			}
-
-			// DFS on children
-			foreach (var child in start.GetChildren())
-			{
-				var cnode = child as Node;
-				if (cnode == null) continue;
-				foreach (var t in types)
-				{
-					if (t.IsInstanceOfType(cnode))
-						return cnode;
-				}
-				var deeper = FindNodeByTypes(cnode, types);
-				if (deeper != null)
-					return deeper;
-			}
-			return null;
-		}
-
-		private static GodotObject FindFirstByType(Node start, Type type)
-		{
-			if (start == null || type == null)
-				return null;
-			if (type.IsInstanceOfType(start))
-				return start;
-			foreach (var child in start.GetChildren())
-			{
-				if (child is Node node)
-				{
-					if (type.IsInstanceOfType(node))
-						return node;
-					var deeper = FindFirstByType(node, type);
-					if (deeper != null)
-						return deeper;
-				}
-			}
-			return null;
-		}
-
-		public Boolean QueryCollisionEnterEvents(String nameFilter, String tagFilter)
-		{
-			foreach (var other in _collisionEnterQueue)
-			{
-				if (other == null)
-					continue;
-				var nameOk = nameFilter == null || String.Equals(other.Name, nameFilter, StringComparison.InvariantCulture);
-				var tagOk = tagFilter == null || other.IsInGroup(tagFilter);
-				if (nameOk && tagOk)
-					return true;
-			}
-			return false;
-		}
-
-		public void Dispose() => throw new NotImplementedException();
-
 		internal void EnqueueCollisionEnter(Node other)
 		{
 			if (other != null)
-			{
 				_collisionEnterQueue.Add(other);
-			}
 		}
 
 		internal void ClearCollisionEventQueues() => _collisionEnterQueue.Clear();
@@ -289,11 +292,11 @@ namespace LunyScratch
 
 				foreach (var child in n3.GetChildren())
 				{
-						if (child is RigidBody3D rb3)
-						{
-							TryConnectBodyEntered(rb3);
-							return new ScratchRigidbody(rb3);
-						}
+					if (child is RigidBody3D rb3)
+					{
+						TryConnectBodyEntered(rb3);
+						return new ScratchRigidbody(rb3);
+					}
 				}
 
 				var newRb3 = new RigidBody3D { Name = "Rigidbody3D" };

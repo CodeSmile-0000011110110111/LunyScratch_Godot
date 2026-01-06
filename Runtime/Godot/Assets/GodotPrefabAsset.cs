@@ -6,11 +6,6 @@ namespace LunyScratch
 	{
 		public PackedScene PackedScene { get; }
 
-		public GodotPrefabAsset(PackedScene scene)
-		{
-			PackedScene = scene;
-		}
-
 		public static GodotPrefabAsset CreatePlaceholder()
 		{
 			var scene = new PackedScene();
@@ -18,5 +13,7 @@ namespace LunyScratch
 			var result = scene.Pack(root);
 			return new GodotPrefabAsset(scene);
 		}
+
+		public GodotPrefabAsset(PackedScene scene) => PackedScene = scene;
 	}
 }

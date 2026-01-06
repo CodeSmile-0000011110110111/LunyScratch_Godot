@@ -1,5 +1,5 @@
-using System;
 using Godot;
+using System;
 
 namespace LunyScratch
 {
@@ -11,15 +11,15 @@ namespace LunyScratch
 
 		public ScratchVector3(Vector3 v)
 		{
-			X = (Single)v.X;
-			Y = (Single)v.Y;
-			Z = (Single)v.Z;
+			X = v.X;
+			Y = v.Y;
+			Z = v.Z;
 		}
 
 		public ScratchVector3(Vector2 v)
 		{
-			X = (Single)v.X;
-			Y = (Single)v.Y;
+			X = v.X;
+			Y = v.Y;
 			Z = 0f;
 		}
 

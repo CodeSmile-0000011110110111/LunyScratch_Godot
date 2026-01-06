@@ -7,7 +7,8 @@ namespace LunyScratch
 	{
 		public Boolean IsKeyPressed(Key key) => key == Key.Any ? Input.IsAnythingPressed() : Input.IsPhysicalKeyPressed(Remap.ToGodotKey(key));
 
-		public Boolean IsKeyJustPressed(Key key) => key == Key.Any ? Input.IsAnythingPressed() : Input.IsPhysicalKeyPressed(Remap.ToGodotKey(key));
+		public Boolean IsKeyJustPressed(Key key) =>
+			key == Key.Any ? Input.IsAnythingPressed() : Input.IsPhysicalKeyPressed(Remap.ToGodotKey(key));
 
 		// Not supported without input mapping; keep simple for now
 		public Boolean IsKeyJustReleased(Key key) => throw new NotImplementedException();

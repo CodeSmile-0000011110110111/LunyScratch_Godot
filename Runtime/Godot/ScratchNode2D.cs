@@ -27,11 +27,13 @@ namespace LunyScratch
 		public void When(EventBlock evt, params IScratchBlock[] blocks) => Run(Blocks.When(evt, blocks));
 
 		public override void _Ready() => OnScratchReady();
+
 		public override void _EnterTree()
 		{
 			_host = new ScratchRunnerHost(this, this);
 			WireCollisionSignalsRecursive(this);
 		}
+
 		public override void _ExitTree() => _host.Dispose();
 		public override void _Process(Double deltaTimeInSeconds) => _host.ProcessUpdate(deltaTimeInSeconds);
 		public override void _PhysicsProcess(Double delta) => _host.ProcessPhysicsUpdate(delta);
@@ -63,9 +65,6 @@ namespace LunyScratch
 			}
 		}
 
-		private void OnScratchBodyEntered(Node body)
-		{
-			_host?.Context?.EnqueueCollisionEnter(body);
-		}
-}
+		private void OnScratchBodyEntered(Node body) => _host?.Context?.EnqueueCollisionEnter(body);
+	}
 }
